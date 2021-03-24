@@ -32,6 +32,7 @@ let data = [
     }
 ];
 
+
 //LV1 作業
 // let travelList = document.querySelector('.travelCardList');
 // let str = "";
@@ -91,7 +92,6 @@ const searchNum = document.querySelector('#searchNum');
 
 //套票顯示區宣告
 let travelList = document.querySelector('.travelCardList');
-
 
 
 //顯示全部旅遊套票
@@ -266,7 +266,7 @@ submitBtn.addEventListener('click',function(e){
     //檢查條件都false才能新增
     if(checkNull == false && checkStar == false){
         data.push({
-            id : Date.now(),
+            id : data.length,
             name : ticketName.value,
             imgUrl : imgUrl.value,
             area : area.value,
