@@ -94,15 +94,9 @@ const searchNum = document.querySelector('#searchNum');
 let travelList = document.querySelector('.travelCardList');
 
 
-//顯示全部旅遊套票
-function showALL(){
-
-    let str = "";
-    let count = 0;
-
-    data.forEach(function(item){
-        count ++;
-        str += `<li class="col-md-6 col-lg-4">
+function renderTicket(item){
+    
+    let str = `<li class="col-md-6 col-lg-4">
         <a class="travelCard" href="#">
             <div class="travelCard-header">
                 <p class="locationText">${item.area}</p>
@@ -126,51 +120,41 @@ function showALL(){
             </div>
         </a>
     </li>`
+
+    return str;
+}
+
+//顯示全部旅遊套票
+function showALL(){
+
+    let ticket = "";
+    let count = 0;
+
+    data.forEach(function(item){
+        count ++;
+        ticket += renderTicket(item);
     })
     
     searchNum.textContent = count;
-    travelList.innerHTML = str;
+    travelList.innerHTML = ticket;
 
 }
 
 //顯示篩選過的旅遊套票
 function showSelect(mode){
 
-    let str = "";
+    let ticket = "";
     let count = 0;
 
     data.forEach(function(item){
         if(item.area == mode){
             count ++;
-            str += `<li class="col-md-6 col-lg-4">
-    <a class="travelCard" href="#">
-        <div class="travelCard-header">
-            <p class="locationText">${item.area}</p>
-            <img class="travelImg" src="${item.imgUrl}" alt="${item.name}">
-            <p class="groupScore">${item.rate.toFixed(1)}</p>
-        </div>
-        <div class="travelCard-body">
-            <h3 class="travelCard-title">${item.name}</h3>
-            <p class="travelCard-text">
-                ${item.description}
-            </p>
-            <div class="travelCard-footer">
-                <p>
-                    <span class="material-icons">
-                        error
-                    </span>
-                    剩下最後 <span id="groupNum">${item.group}</span> 組
-                </p>
-                <p>TWD<span class="groupPrice">$${item.price}</span></p>
-            </div>
-        </div>
-    </a>
-                    </li>` 
+            ticket += renderTicket(item);
         }
     })
 
     searchNum.textContent = count;
-    travelList.innerHTML = str;
+    travelList.innerHTML = ticket;
 
 }
 
@@ -211,6 +195,37 @@ function starCheck(){
     return starExceed;
 }
 
+//套票組數是否大於0
+function groupNumCheck(){
+
+    let groupNnusual = false; 
+
+    if(num.value < 1){
+        checkGroup = true;
+        num.classList.add('error');
+        alert("套票組數小於1張，請在確認!!");
+    }else{
+        num.classList.remove('error');
+    }
+
+    return groupNnusual;
+}
+
+//價格是否正常
+function priceCheck(){
+
+    let priceNnusual = false;
+    if(price.value < 0){
+        price.classList.add('error');
+        alert("套票價格為負數，請重填!!")
+        priceNnusual = true;
+    }else{
+        price.classList.remove('error');
+    }
+    return priceNnusual;
+
+}
+
 //輸入或點擊input就檢查
 function keyCheckNull(inputName){
     
@@ -222,27 +237,16 @@ function keyCheckNull(inputName){
     
 }
 
-ticketName.addEventListener('keyup',function(e){
-    keyCheckNull(ticketName);
+formNull.forEach(function(item){
+    item.addEventListener('keyup',function(e){
+        keyCheckNull(item);
+    })
 })
-imgUrl.addEventListener('keyup',function(e){
-    keyCheckNull(imgUrl);
-})
+
 area.addEventListener('click',function(e){
     keyCheckNull(area);
 })
-price.addEventListener('keyup',function(e){
-    keyCheckNull(price);
-})
-num.addEventListener('keyup',function(e){
-    keyCheckNull(num);
-})
-star.addEventListener('keyup',function(e){
-    keyCheckNull(star);
-})
-introduce.addEventListener('keyup',function(e){
-    keyCheckNull(introduce);
-})
+
 //輸入和點擊input就檢查結束--------------------
 
 
@@ -258,13 +262,18 @@ submitBtn.addEventListener('click',function(e){
     //接收function回傳的防呆布林值
     let checkNull = proofreading(); //是否有空值
     let checkStar = false;          //星級是否超過範圍
+    let checkGroup = false;         //套票數是否小於1張
+    let checkPrice = false;         //價格是否為負數
 
-    if(checkNull == false){//先確定沒有空值在檢查星級範圍
+    if(checkNull == false){
+        //先確定沒有空值在檢查星級範圍、套票數、價格是否正常
         checkStar = starCheck();
+        checkGroup = groupNumCheck();
+        checkPrice = priceCheck();
     }
 
     //檢查條件都false才能新增
-    if(checkNull == false && checkStar == false){
+    if(checkNull == false && checkStar == false && checkGroup == false && checkPrice == false){
         data.push({
             id : data.length,
             name : ticketName.value,
