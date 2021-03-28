@@ -201,7 +201,7 @@ function groupNumCheck(){
     let groupNnusual = false; 
 
     if(num.value < 1){
-        checkGroup = true;
+        groupNnusual = true;
         num.classList.add('error');
         alert("套票組數小於1張，請在確認!!");
     }else{
@@ -226,26 +226,22 @@ function priceCheck(){
 
 }
 
-//輸入或點擊input就檢查
-function keyCheckNull(inputName){
-    
-    if(inputName.value != ""){
-        inputName.classList.remove('error');
-    }else{
-        inputName.classList.add('error');
-    }
-    
-}
 
 formNull.forEach(function(item){
-    item.addEventListener('keyup',function(e){
-        keyCheckNull(item);
+
+    item.addEventListener('blur',function(e){
+        //blur 當離開焦點時觸發
+        
+        if(item.value != ""){
+            item.classList.remove('error');
+        }else{
+            item.classList.add('error');
+        }
+
     })
+    
 })
 
-area.addEventListener('click',function(e){
-    keyCheckNull(area);
-})
 
 //輸入和點擊input就檢查結束--------------------
 
